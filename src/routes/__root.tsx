@@ -6,8 +6,11 @@ import {
   TanStackRouterDevtoolsPanel,
 } from "@tanstack/react-router-devtools";
 
+
 import Header from "../components/Header";
 import appCss from "../styles.css?url";
+import { useEffect } from "react";
+import { client } from "../lib/appwrite";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -37,6 +40,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    // Ping Appwrite backend to verify setup
+    if (typeof client.ping === "function") {
+      client.ping();
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <html lang="en">
@@ -55,7 +65,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             plugins={[
               {
                 name: "Tanstack Router",
-                render: <TanStackRouterDevtoolsPanel />,
+                render: <TanStackRouterDevtoolsPanel />, 
               },
             ]}
           />
